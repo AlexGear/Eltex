@@ -1,14 +1,22 @@
 package ru.eltex.phonebook;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class PhoneBook {
-    protected static ArrayList<User> users = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
 
+    public static void main(String[] args) {
+	    PhoneBook phoneBook = new PhoneBook();
+	    phoneBook.enterMenu();
+    }
 
-	public static void main(String[] args) {
+    public PhoneBook() {
+    }
+
+    public void enterMenu() {
         while (true) {
             int option = askOption();
             System.out.println();
@@ -21,7 +29,7 @@ public class PhoneBook {
         }
     }
 
-    private static int askOption() {
+    private int askOption() {
         Scanner in = new Scanner(System.in);
         System.out.println("Phone book menu:");
         while (true) {
@@ -36,7 +44,7 @@ public class PhoneBook {
         }
     }
 
-    private static void listUsers() {
+    private void listUsers() {
 	    if(users.size() == 0) {
 	        System.out.println("No users\n");
 	        return;
@@ -49,7 +57,7 @@ public class PhoneBook {
         System.out.println();
     }
 
-    private static void createNewUser() {
+    private void createNewUser() {
         Scanner in = new Scanner(System.in);
 
         System.out.println("Enter new user's name:");
@@ -63,7 +71,7 @@ public class PhoneBook {
         System.out.println("User created successfully\n");
     }
 
-    private static void removeUser() {
+    private void removeUser() {
         Scanner in = new Scanner(System.in);
 
         while(true) {
@@ -80,7 +88,7 @@ public class PhoneBook {
         }
     }
 
-    private static boolean tryRemoveUser(int id) {
+    private boolean tryRemoveUser(int id) {
 	    for(int i = 0; i < users.size(); i++) {
 	        User user = users.get(i);
 	        if(id == user.getId()) {
