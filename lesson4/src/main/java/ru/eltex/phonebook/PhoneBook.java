@@ -1,19 +1,43 @@
 package ru.eltex.phonebook;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class PhoneBook {
+    private final String filename;
     private ArrayList<User> users = new ArrayList<>();
 
-    public static void main(String[] args) {
-	    PhoneBook phoneBook = new PhoneBook();
+    public static void main(String[] args) throws IOException {
+	    PhoneBook phoneBook = new PhoneBook("phonebook.csv");
 	    phoneBook.enterMenu();
+	    phoneBook.save();
     }
 
-    public PhoneBook() {
+    public PhoneBook(String filename) throws IOException {
+        this.filename = filename;
+
+        try (FileReader reader = new FileReader(filename);
+             Scanner scanner = new Scanner(reader))
+        {
+            while(scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                User user = new User();
+                user.initWithCSV(line);
+                users.add(user);
+            }
+        }
+        catch(FileNotFoundException e) {
+            System.out.println("File '" + filename + "' was not found. A new one will be created on exit.");
+            return;
+        }
+        catch(IOException e) {
+            System.err.println("Couldn't open file '" + filename + "'");
+            throw e;
+        }
     }
 
     public void enterMenu() {
@@ -29,11 +53,23 @@ public class PhoneBook {
         }
     }
 
+    public void save() throws IOException {
+        try(FileWriter writer = new FileWriter(filename)) {
+            for(User user : users) {
+                writer.write(user.toCSV() + "\n");
+            }
+        }
+        catch(IOException e) {
+            System.err.println("Failed to save to file '" + filename + "'");
+            throw e;
+        }
+    }
+
     private int askOption() {
         Scanner in = new Scanner(System.in);
         System.out.println("Phone book menu:");
         while (true) {
-            System.out.println("  1. List users\n  2. Create new user\n  3. Remove user\n  0. Exit");
+            System.out.println("  1. List users\n  2. Create new user\n  3. Remove user\n  0. Save and Exit");
             System.out.println("Enter option:");
 
             int option = in.nextInt();
