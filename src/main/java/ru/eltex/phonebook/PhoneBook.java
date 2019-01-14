@@ -12,6 +12,9 @@ public class PhoneBook {
 
     public static void main(String[] args) throws IOException {
 	    PhoneBook phoneBook = new PhoneBook("phonebook.csv");
+
+	    new Server(80, phoneBook);
+
 	    phoneBook.enterMenu();
 	    phoneBook.save();
     }
