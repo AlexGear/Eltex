@@ -4,8 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class PhoneBook {
     private final String filename;
@@ -17,7 +16,12 @@ public class PhoneBook {
 	    phoneBook.save();
     }
 
+    public List<User> getUsers() {
+        return Collections.unmodifiableList(users);
+    }
+
     public PhoneBook(String filename) throws IOException {
+
         this.filename = filename;
 
         try (FileReader reader = new FileReader(filename);
