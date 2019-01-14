@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class PhoneBook {
+public class PhoneBook implements IdProvider {
     private final String filename;
     private ArrayList<User> users = new ArrayList<>();
 
@@ -100,6 +100,17 @@ public class PhoneBook {
         System.out.println();
     }
 
+    @Override
+    public int getId() {
+        int maxId = -1;
+        for(User user : users) {
+            if(user.getId() > maxId) {
+                maxId = user.getId();
+            }
+        }
+        return maxId + 1;
+    }
+
     private void createNewUser() {
         Scanner in = new Scanner(System.in);
 
@@ -108,7 +119,7 @@ public class PhoneBook {
         System.out.println("Enter new user's phone number:");
         long phoneNumber = in.nextLong();
 
-        User newUser = new User(name, phoneNumber);
+        User newUser = new User(this, name, phoneNumber);
         users.add(newUser);
 
         System.out.println("User created successfully\n");
@@ -141,4 +152,4 @@ public class PhoneBook {
         }
 	    return false;
     }
-} 
+}
