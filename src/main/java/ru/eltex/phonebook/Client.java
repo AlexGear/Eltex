@@ -73,7 +73,7 @@ public class Client implements Runnable {
 
     private static String getRequestedPage(String header) {
         if(!header.startsWith("GET")) {
-            throw new UnsupportedOperationException("Given request is not a GET request");
+            throw new UnsupportedOperationException("Given request is not a GET request: " + header);
         }
         Matcher matcher = pagePattern.matcher(header);
         if(matcher.find()) {
@@ -99,7 +99,6 @@ public class Client implements Runnable {
         sb.append("<html>");
         sb.append("<head><title>PhoneBook</title></head>");
         sb.append("<body>");
-        sb.append("<a href=\"index.html\">Back</a>");
 
         List<User> users = phoneBook.getUsers();
 

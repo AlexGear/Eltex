@@ -1,7 +1,28 @@
 <html>
-<head><title>PhoneBook</title></head>
+<head>
+	<title>PhoneBook</title>
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+	<script src="jquery.js"></script>
+	<script> 
+		$(document).ready(function() {
+			$("#imagecontainer").html('<img src="photo.jpg" height="300px">');
+			$("#button").click(loadPhonebook);
+		})
+
+		function loadPhonebook() {
+			$.ajax({
+				type: 'GET',
+				url: '/phonebook',
+				success: function(data) {
+					$("#phonebook").html(data);
+				}
+			});
+		}
+	</script>
+</head>
 <body>
-	<b>Hello, world!</b><br>
-	<a href="phonebook">Open Phone Book</a>
+	<div id="imagecontainer"></div>
+	<button id="button">Show PhoneBook</button>
+	<div id="phonebook"></div>
 </body>
 </html>
