@@ -20,7 +20,7 @@ public class PhoneBook {
         } catch (Exception e) {
             System.err.println("Failed to obtain users");
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
     }
 
