@@ -13,7 +13,8 @@ public class Client implements Runnable {
     private final OutputStream out;
     private final Thread thread;
 
-    public static final String PHONEBOOK_PAGE = "phonebook";
+    private static final String PHONEBOOK_PAGE = "phonebook";
+    private static final String WEB_FILES_ROOT_FOLDER = "web";
 
     private static final Pattern pagePattern = Pattern.compile("GET\\ \\/(.*?)\\ .*");
 
@@ -87,6 +88,7 @@ public class Client implements Runnable {
             return buildPhoneBookHtml().getBytes();
         }
 
+        page = WEB_FILES_ROOT_FOLDER + "/" + page;
         try (RandomAccessFile file = new RandomAccessFile(page, "r")) {
             byte[] content = new byte[(int)file.length()];
             file.readFully(content);
