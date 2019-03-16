@@ -4,3 +4,7 @@ mainClassName='ru.eltex.phonebook.PhoneBook'
 run {
     standardInput = System.in
 }
+
+dependencies {
+    runtime files('libs/mysql-connector-java-8.0.15.jar')
+}
