@@ -64,7 +64,7 @@ public class Client implements Runnable {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         while(true) {
             String line = reader.readLine();
-            if(line == null || line.isBlank())
+            if(line == null || line.trim().isEmpty())
                 break;
             sb.append(line).append("\r\n");
         }
@@ -110,7 +110,7 @@ public class Client implements Runnable {
             sb.append("<tr><th>ID</th><th>Name</th><th>Phone Number</th></tr>");
             for(User user : users) {
                 sb.append("<tr>");
-                final String format = "<tr><td>%d</td><td>%s</td><td>%d</td></tr>";
+                final String format = "<tr><td>%d</td><td>%s</td><td>%s</td></tr>";
                 sb.append(String.format(format, user.getId(), user.getName(), user.getPhoneNumber()));
                 sb.append("</tr>");
             }

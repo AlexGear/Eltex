@@ -1,53 +1,34 @@
 package ru.eltex.phonebook;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class PhoneBook implements IdProvider {
-    private final String filename;
-    private ArrayList<User> users = new ArrayList<>();
+public class PhoneBook {
+    private final PhoneBookStorage storage;
 
     public static void main(String[] args) throws IOException {
-	    PhoneBook phoneBook = new PhoneBook("phonebook.csv");
+	    PhoneBook phoneBook = new PhoneBook();
 
-	    new Server(80, phoneBook);
+	    new Server(8008, phoneBook);
 
 	    phoneBook.enterMenu();
-	    phoneBook.save();
     }
 
     public List<User> getUsers() {
-        return Collections.unmodifiableList(users);
-    }
-
-    public PhoneBook(String filename) throws IOException {
-
-        this.filename = filename;
-
-        try (FileReader reader = new FileReader(filename);
-             Scanner scanner = new Scanner(reader))
-        {
-            while(scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                User user = new User();
-                user.initWithCSV(line);
-                users.add(user);
-            }
-        }
-        catch(FileNotFoundException e) {
-            System.out.println("File '" + filename + "' was not found. A new one will be created on exit.");
-            return;
-        }
-        catch(IOException e) {
-            System.err.println("Couldn't open file '" + filename + "'");
-            throw e;
+        try {
+            return storage.getAllUsers();
+        } catch (Exception e) {
+            System.err.println("Failed to obtain users");
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public void enterMenu() {
+    private PhoneBook() throws IOException {
+        storage = new CSVStorage(this, "phonebook.csv");
+    }
+
+    private void enterMenu() {
         while (true) {
             int option = askOption();
             System.out.println();
@@ -60,34 +41,27 @@ public class PhoneBook implements IdProvider {
         }
     }
 
-    public void save() throws IOException {
-        try(FileWriter writer = new FileWriter(filename)) {
-            for(User user : users) {
-                writer.write(user.toCSV() + "\n");
-            }
-        }
-        catch(IOException e) {
-            System.err.println("Failed to save to file '" + filename + "'");
-            throw e;
-        }
-    }
-
     private int askOption() {
         Scanner in = new Scanner(System.in);
         System.out.println("Phone book menu:");
         while (true) {
-            System.out.println("  1. List users\n  2. Create new user\n  3. Remove user\n  0. Save and Exit");
+            System.out.println("  1. List users\n  2. Create new user\n  3. Remove users\n  0. Exit");
             System.out.println("Enter option:");
 
-            int option = in.nextInt();
-            if(option >= 0 && option <= 3)
-                return option;
+            try {
+                int option = in.nextInt();
+                if(option >= 0 && option <= 3)
+                    return option;
+            } catch (Exception ignored) {
+                in = new Scanner(System.in);
+            }
 
             System.out.println("Please, enter correct option");
         }
     }
 
     private void listUsers() {
+        List<User> users = getUsers();
 	    if(users.size() == 0) {
 	        System.out.println("No users\n");
 	        return;
@@ -95,20 +69,9 @@ public class PhoneBook implements IdProvider {
 
 	    System.out.printf("%3s %25s %20s\n", "ID", "Name", "Phone Number");
         for(User user : users) {
-            System.out.printf("%3d %25s %20d\n", user.getId(), user.getName(), user.getPhoneNumber());
+            System.out.printf("%3d %25s %20s\n", user.getId(), user.getName(), user.getPhoneNumber());
         }
         System.out.println();
-    }
-
-    @Override
-    public int getId() {
-        int maxId = -1;
-        for(User user : users) {
-            if(user.getId() > maxId) {
-                maxId = user.getId();
-            }
-        }
-        return maxId + 1;
     }
 
     private void createNewUser() {
@@ -117,12 +80,14 @@ public class PhoneBook implements IdProvider {
         System.out.println("Enter new user's name:");
         String name = in.nextLine();
         System.out.println("Enter new user's phone number:");
-        long phoneNumber = in.nextLong();
+        String phoneNumber = in.nextLine();
 
-        User newUser = new User(this, name, phoneNumber);
-        users.add(newUser);
-
-        System.out.println("User created successfully\n");
+        try {
+            storage.insertNewUser(name, phoneNumber);
+            System.out.println("User created successfully\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void removeUser() {
@@ -130,26 +95,27 @@ public class PhoneBook implements IdProvider {
 
         while(true) {
             System.out.println("Enter ID of user to remove ('-1' to cancel):");
-            int id = in.nextInt();
-            if(id == -1)
-                return;
 
-            if(tryRemoveUser(id)) {
-                System.out.println("User removed successfully\n");
-                return;
+            int id;
+            try {
+                if((id = in.nextInt()) == -1) {
+                    return;
+                }
+            } catch (Exception ignored) {
+                in = new Scanner(System.in);
+                continue;
             }
-            System.out.printf("User of ID %d was not found. Please, try again\n", id);
-        }
-    }
 
-    private boolean tryRemoveUser(int id) {
-	    for(int i = 0; i < users.size(); i++) {
-	        User user = users.get(i);
-	        if(id == user.getId()) {
-	            users.remove(i);
-	            return true;
+            try {
+                if(storage.removeUserById(id)) {
+                    System.out.println("User removed successfully\n");
+                }
+                else {
+                    System.out.printf("User of ID %d was not found. Please, try again\n", id);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-	    return false;
     }
 }

@@ -1,5 +1,5 @@
 package ru.eltex.phonebook;
 
 public interface IdProvider {
-    int getId();
+    int getId() throws IdProvidingException;
 }

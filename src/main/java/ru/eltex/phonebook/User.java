@@ -3,12 +3,18 @@ package ru.eltex.phonebook;
 public class User implements CSV {
     private int id;
     private String name;
-    private long phoneNumber;
+    private String phoneNumber;
 
     public User() {
     }
 
-    public User(IdProvider idProvider, String name, long phoneNumber) {
+    public User(int id, String name, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public User(IdProvider idProvider, String name, String phoneNumber) throws IdProvidingException {
         id = idProvider.getId();
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -26,17 +32,17 @@ public class User implements CSV {
         this.name = name;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     @Override
     public String toCSV() {
-        return String.format("%d;%s;%d", id, name, phoneNumber);
+        return String.format("%d;%s;%s", id, name, phoneNumber);
     }
 
     @Override
@@ -47,6 +53,6 @@ public class User implements CSV {
         }
         setId(Integer.parseInt(args[0]));
         setName(args[1]);
-        setPhoneNumber(Long.parseLong(args[2]));
+        setPhoneNumber(args[2]);
     }
 }
