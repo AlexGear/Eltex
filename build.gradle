@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'application'
-mainClassName='ru.eltex.phonebook.PhoneBook'
+mainClassName='ru.eltex.phonebook.App'
 run {
     standardInput = System.in
 }

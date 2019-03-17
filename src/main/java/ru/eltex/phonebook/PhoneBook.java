@@ -6,12 +6,19 @@ import java.util.*;
 public class PhoneBook {
     private final PhoneBookStorage storage;
 
-    public static void main(String[] args) throws IOException {
-	    PhoneBook phoneBook = new PhoneBook();
-
-	    new Server(8008, phoneBook);
-
-	    phoneBook.enterMenu();
+    private static PhoneBook instance;
+    public static PhoneBook getInstance() {
+        if(instance == null) {
+            try {
+                instance = new PhoneBook();
+                instance.enterMenu();
+            } catch (IOException e) {
+                System.err.println("Failed to create PhoneBook");
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        return instance;
     }
 
     public List<User> getUsers() {
@@ -29,17 +36,19 @@ public class PhoneBook {
         storage = new DBStorage(this);
     }
 
-    private void enterMenu() {
-        while (true) {
-            int option = askOption();
-            System.out.println();
-            switch (option) {
-                case 1: listUsers(); break;
-                case 2: createNewUser(); break;
-                case 3: removeUser(); break;
-                case 0: return;
+    void enterMenu() {
+        new Thread(() -> {
+            while (true) {
+                int option = askOption();
+                System.out.println();
+                switch (option) {
+                    case 1: listUsers(); break;
+                    case 2: createNewUser(); break;
+                    case 3: removeUser(); break;
+                    case 0: System.exit(0);
+                }
             }
-        }
+        }).start();
     }
 
     private int askOption() {
