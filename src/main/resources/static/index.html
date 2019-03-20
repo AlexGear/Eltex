@@ -12,9 +12,11 @@
 		function loadPhonebook() {
 			$.ajax({
 				type: 'GET',
+				dataType: 'json',
 				url: '/phonebook',
 				success: function(data) {
-					$("#phonebook").html(data);
+					//$("#phonebook").html(data);
+					console.log(data);
 				}
 			});
 		}
