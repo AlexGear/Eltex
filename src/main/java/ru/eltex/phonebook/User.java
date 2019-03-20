@@ -15,9 +15,7 @@ public class User implements CSV {
     }
 
     public User(IdProvider idProvider, String name, String phoneNumber) throws IdProvidingException {
-        id = idProvider.getId();
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+        this(idProvider.getId(), name, phoneNumber);
     }
 
     public int getId() {
