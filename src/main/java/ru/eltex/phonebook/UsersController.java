@@ -9,6 +9,6 @@ import java.util.List;
 public class UsersController {
     @GetMapping("/phonebook")
     public List<User> getUsers() {
-        return PhoneBook.getInstance().getUsers();
+        return PhoneBook.INSTANCE.getUsers();
     }
 }

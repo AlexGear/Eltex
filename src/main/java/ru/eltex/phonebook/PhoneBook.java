@@ -4,23 +4,21 @@ import java.io.IOException;
 import java.util.*;
 
 public class PhoneBook {
-    private final PhoneBookStorage storage;
+    public static PhoneBook INSTANCE;
 
-    private static PhoneBook instance;
-    static PhoneBook getInstance() {
-        if(instance == null) {
-            try {
-                instance = new PhoneBook();
-            } catch (IOException e) {
-                System.err.println("Failed to create PhoneBook");
-                e.printStackTrace();
-                System.exit(1);
-            }
+    static {
+        try {
+            INSTANCE = new PhoneBook();
+        } catch (IOException e) {
+            System.err.println("Failed to create PhoneBook");
+            e.printStackTrace();
+            System.exit(1);
         }
-        return instance;
     }
 
-    List<User> getUsers() {
+    private final PhoneBookStorage storage;
+
+    public List<User> getUsers() {
         try {
             return storage.getAllUsers();
         } catch (Exception e) {
