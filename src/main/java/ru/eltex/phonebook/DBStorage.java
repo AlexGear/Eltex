@@ -8,18 +8,18 @@ public class DBStorage extends PhoneBookStorage {
     private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/phonebook";
     private static final String LOGIN = "admin";
     private static final String PASSWORD = "ausrotten";
-    private static final String TABLE_NAME = "users";
 
-    public DBStorage(PhoneBook phoneBook) {
+    private final String tableName;
+
+    public DBStorage(PhoneBook phoneBook, String tableName) {
         super(phoneBook);
+        this.tableName = tableName;
     }
 
     @Override
     public List<User> getAllUsers() throws SQLException {
-        final String sql = "SELECT * FROM " + TABLE_NAME;
-        try (Connection connection = DriverManager.getConnection(CONNECTION_URL, LOGIN, PASSWORD);
-             Statement statement = connection.createStatement()) {
-
+        final String sql = "SELECT * FROM " + tableName;
+        try (Connection connection = connect(); Statement statement = connection.createStatement()) {
             List<User> users = new ArrayList<>();
             ResultSet rs = statement.executeQuery(sql);
             while(rs.next()) {
@@ -34,10 +34,10 @@ public class DBStorage extends PhoneBookStorage {
 
     @Override
     public User insertNewUser(String name, String phoneNumber) throws SQLException {
-        final String insertSql = "INSERT INTO " + TABLE_NAME + " (name, phone) VALUE (?, ?)";
+        final String insertSql = "INSERT INTO " + tableName + " (name, phone) VALUE (?, ?)";
         final String selectLastInsertIdSql = "SELECT LAST_INSERT_ID()";
 
-        try (Connection connection = DriverManager.getConnection(CONNECTION_URL, LOGIN, PASSWORD)) {
+        try (Connection connection = connect()) {
             try (PreparedStatement statement = connection.prepareStatement(insertSql)) {
                 statement.setString(1, name);
                 statement.setString(2, phoneNumber);
@@ -54,11 +54,15 @@ public class DBStorage extends PhoneBookStorage {
 
     @Override
     public boolean removeUserById(int id) throws Exception {
-        final String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = " + id;
-        try (Connection connection = DriverManager.getConnection(CONNECTION_URL, LOGIN, PASSWORD)) {
+        final String sql = "DELETE FROM " + tableName + " WHERE id = " + id;
+        try (Connection connection = connect()) {
             try (Statement statement = connection.createStatement()) {
                 return 1 == statement.executeUpdate(sql);
             }
         }
+    }
+
+    private static Connection connect() throws SQLException {
+        return DriverManager.getConnection(CONNECTION_URL, LOGIN, PASSWORD);
     }
 }
