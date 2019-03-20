@@ -55,7 +55,7 @@ public class DBStorage implements PhoneBookStorage {
     }
 
     @Override
-    public boolean removeUserById(int id) throws Exception {
+    public boolean removeUserById(int id) throws SQLException {
         final String sql = "DELETE FROM " + tableName + " WHERE id = " + id;
         try (Connection connection = connect()) {
             try (Statement statement = connection.createStatement()) {
