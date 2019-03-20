@@ -29,7 +29,6 @@ public class PhoneBook {
     }
 
     private PhoneBook() throws IOException {
-        //storage = new CSVStorage(this, "phonebook.csv");
         storage = new DBStorage(this, "users");
     }
 
