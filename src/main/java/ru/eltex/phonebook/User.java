@@ -32,4 +32,13 @@ public class User {
         }
         this.phoneNumber = phoneNumber.trim();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof User) {
+            User other = (User)obj;
+            return id == other.id && name.equals(other.name) && phoneNumber.equals(other.phoneNumber);
+        }
+        return false;
+    }
 }
