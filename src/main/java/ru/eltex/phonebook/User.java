@@ -10,8 +10,8 @@ public class User implements CSV {
 
     public User(int id, String name, String phoneNumber) {
         this.id = id;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.name = name.trim();
+        this.phoneNumber = phoneNumber.trim();
     }
 
     public User(IdProvider idProvider, String name, String phoneNumber) throws IdProvidingException {
@@ -27,7 +27,7 @@ public class User implements CSV {
     public String getName() { return name; }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
     public String getPhoneNumber() {
@@ -35,7 +35,7 @@ public class User implements CSV {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = phoneNumber.trim();
     }
 
     @Override
