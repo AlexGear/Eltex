@@ -33,7 +33,9 @@ public class DBStorage extends PhoneBookStorage {
     }
 
     @Override
-    public User insertNewUser(String name, String phoneNumber) throws SQLException {
+    public User insertNewUser(String name, String  phoneNumber) throws SQLException, IllegalArgumentException {
+        User user = new User(0, name, phoneNumber);
+
         final String insertSql = "INSERT INTO " + tableName + " (name, phone) VALUE (?, ?)";
         final String selectLastInsertIdSql = "SELECT LAST_INSERT_ID()";
 
@@ -47,7 +49,8 @@ public class DBStorage extends PhoneBookStorage {
                 ResultSet rs = statement.executeQuery(selectLastInsertIdSql);
                 rs.next();
                 int id = rs.getInt(1);
-                return new User(id, name, phoneNumber);
+                user.setId(id);
+                return user;
             }
         }
     }

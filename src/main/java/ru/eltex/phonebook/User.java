@@ -5,32 +5,31 @@ public class User {
     private String name;
     private String phoneNumber;
 
-    public User() {
-    }
-
     public User(int id, String name, String phoneNumber) {
-        this.id = id;
-        this.name = name.trim();
-        this.phoneNumber = phoneNumber.trim();
+        setId(id);
+        setName(name);
+        setPhoneNumber(phoneNumber);
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
 
-    private void setId(int id) { this.id = id; }
+    public void setId(int id) { this.id = id; }
 
     public String getName() { return name; }
 
     public void setName(String name) {
+        if(name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("name is null or blank");
+        }
         this.name = name.trim();
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+    public String getPhoneNumber() { return phoneNumber; }
 
     public void setPhoneNumber(String phoneNumber) {
+        if(phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("phoneNumber is null or blank");
+        }
         this.phoneNumber = phoneNumber.trim();
     }
 }
