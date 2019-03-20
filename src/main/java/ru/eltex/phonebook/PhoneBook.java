@@ -29,7 +29,7 @@ public class PhoneBook {
     }
 
     private PhoneBook() throws IOException {
-        storage = new DBStorage(this, "users");
+        storage = new DBStorage("users");
     }
 
     void enterMenu() {

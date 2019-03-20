@@ -4,15 +4,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBStorage extends PhoneBookStorage {
+public class DBStorage implements PhoneBookStorage {
     private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/phonebook";
     private static final String LOGIN = "admin";
     private static final String PASSWORD = "ausrotten";
 
     private final String tableName;
 
-    public DBStorage(PhoneBook phoneBook, String tableName) {
-        super(phoneBook);
+    public DBStorage(String tableName) {
         this.tableName = tableName;
     }
 
