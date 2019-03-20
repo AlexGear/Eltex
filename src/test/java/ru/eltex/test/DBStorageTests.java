@@ -23,7 +23,19 @@ public class DBStorageTests {
     }
 
     @Test
-    public void testUserInsertion() throws SQLException {
+    public void testInsertedUserFields() throws SQLException {
+        String expectedName = "Leroy";
+        String expectedPhoneNumber = "90109221";
+
+        User insertedUser = db.insertNewUser(expectedName, expectedPhoneNumber);
+        insertedUsers.add(insertedUser);
+
+        Assert.assertEquals(expectedName, insertedUser.getName());
+        Assert.assertEquals(expectedPhoneNumber, insertedUser.getPhoneNumber());
+    }
+
+    @Test
+    public void testInsertedUsersStayInDB() throws SQLException {
         insertedUsers.add(db.insertNewUser("Owl", "9853201"));
         insertedUsers.add(db.insertNewUser("Kolya", "90123490"));
         insertedUsers.add(db.insertNewUser("SuperUser", "534689231"));
