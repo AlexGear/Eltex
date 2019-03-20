@@ -36,18 +36,16 @@ public class PhoneBook {
     }
 
     void enterMenu() {
-        new Thread(() -> {
-            while (true) {
-                int option = askOption();
-                System.out.println();
-                switch (option) {
-                    case 1: listUsers(); break;
-                    case 2: createNewUser(); break;
-                    case 3: removeUser(); break;
-                    case 0: System.exit(0);
-                }
+        while (true) {
+            int option = askOption();
+            System.out.println();
+            switch (option) {
+                case 1: listUsers(); break;
+                case 2: createNewUser(); break;
+                case 3: removeUser(); break;
+                case 0: System.exit(0);
             }
-        }).start();
+        }
     }
 
     private int askOption() {
