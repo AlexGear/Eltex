@@ -8,7 +8,7 @@ import java.io.IOException;
 public class App {
 
     public static void main(String[] args) throws IOException {
-        PhoneBook.getInstance();
         SpringApplication.run(App.class, args);
+        PhoneBook.getInstance().enterMenu();
     }
 }

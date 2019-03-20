@@ -7,11 +7,10 @@ public class PhoneBook {
     private final PhoneBookStorage storage;
 
     private static PhoneBook instance;
-    public static PhoneBook getInstance() {
+    static PhoneBook getInstance() {
         if(instance == null) {
             try {
                 instance = new PhoneBook();
-                instance.enterMenu();
             } catch (IOException e) {
                 System.err.println("Failed to create PhoneBook");
                 e.printStackTrace();
@@ -21,7 +20,7 @@ public class PhoneBook {
         return instance;
     }
 
-    public List<User> getUsers() {
+    List<User> getUsers() {
         try {
             return storage.getAllUsers();
         } catch (Exception e) {
