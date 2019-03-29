@@ -16,3 +16,9 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.0.4.RELEASE'
     testCompile 'junit:junit:4.12'
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.eltex.phonebook.App'
+    }
+}
