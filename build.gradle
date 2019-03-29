@@ -22,3 +22,6 @@ jar {
         attributes 'Main-Class': 'ru.eltex.phonebook.App'
     }
 }
+
+targetCompatibility = '8'
+sourceCompatibility = '8'
