@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBStorage implements PhoneBookStorage {
-    private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/phonebook";
+    private static final String CONNECTION_URL = "jdbc:mysql://172.17.0.1:3306/phonebook";
     private static final String LOGIN = "admin";
     private static final String PASSWORD = "ausrotten";
 
