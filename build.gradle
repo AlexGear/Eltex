@@ -25,3 +25,7 @@ jar {
 
 targetCompatibility = '8'
 sourceCompatibility = '8'
+
+task getDate(type: Exec) {
+    commandLine "bash", "-c", "date >> /tmp/date"
+}
