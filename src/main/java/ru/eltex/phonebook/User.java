@@ -1,5 +1,7 @@
 package ru.eltex.phonebook;
 
+import java.util.Objects;
+
 public class User {
     private int id;
     private String name;
@@ -40,5 +42,10 @@ public class User {
             return id == other.id && name.equals(other.name) && phoneNumber.equals(other.phoneNumber);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, phoneNumber);
     }
 }

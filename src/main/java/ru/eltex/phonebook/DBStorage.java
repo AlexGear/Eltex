@@ -20,12 +20,13 @@ public class DBStorage implements PhoneBookStorage {
         final String sql = "SELECT * FROM " + tableName;
         try (Connection connection = connect(); Statement statement = connection.createStatement()) {
             List<User> users = new ArrayList<>();
-            ResultSet rs = statement.executeQuery(sql);
-            while(rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String phoneNumber = rs.getString("phone");
-                users.add(new User(id, name, phoneNumber));
+            try(ResultSet rs = statement.executeQuery(sql)) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    String phoneNumber = rs.getString("phone");
+                    users.add(new User(id, name, phoneNumber));
+                }
             }
             return users;
         }
@@ -45,11 +46,12 @@ public class DBStorage implements PhoneBookStorage {
                 statement.executeUpdate();
             }
             try (Statement statement = connection.createStatement()) {
-                ResultSet rs = statement.executeQuery(selectLastInsertIdSql);
-                rs.next();
-                int id = rs.getInt(1);
-                user.setId(id);
-                return user;
+                try(ResultSet rs = statement.executeQuery(selectLastInsertIdSql)) {
+                    rs.next();
+                    int id = rs.getInt(1);
+                    user.setId(id);
+                    return user;
+                }
             }
         }
     }

@@ -1,20 +1,12 @@
 package ru.eltex.phonebook;
 
+import org.springframework.boot.SpringApplication;
+
 import java.io.IOException;
 import java.util.*;
 
 public class PhoneBook {
-    public static PhoneBook INSTANCE;
-
-    static {
-        try {
-            INSTANCE = new PhoneBook();
-        } catch (IOException e) {
-            System.err.println("Failed to create PhoneBook");
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
+    public static final PhoneBook INSTANCE = new PhoneBook();
 
     private final PhoneBookStorage storage;
 
@@ -28,7 +20,7 @@ public class PhoneBook {
         }
     }
 
-    private PhoneBook() throws IOException {
+    private PhoneBook() {
         storage = new DBStorage("users");
     }
 
@@ -40,13 +32,13 @@ public class PhoneBook {
                 case 1: listUsers(); break;
                 case 2: createNewUser(); break;
                 case 3: removeUser(); break;
-                case 0: System.exit(0);
+                case 0: return;
             }
         }
     }
 
     private int askOption() {
-        Scanner in = new Scanner(System.in);
+        Scanner in = createStdinScanner();
         System.out.println("Phone book menu:");
         while (true) {
             System.out.println("  1. List users\n  2. Create new user\n  3. Remove users\n  0. Exit");
@@ -57,7 +49,7 @@ public class PhoneBook {
                 if(option >= 0 && option <= 3)
                     return option;
             } catch (Exception ignored) {
-                in = new Scanner(System.in);
+                in = createStdinScanner();
             }
 
             System.out.println("Please, enter correct option");
@@ -67,19 +59,19 @@ public class PhoneBook {
     private void listUsers() {
         List<User> users = getUsers();
 	    if(users.size() == 0) {
-	        System.out.println("No users\n");
+	        System.out.println("No users%n");
 	        return;
         }
 
-	    System.out.printf("%3s %25s %20s\n", "ID", "Name", "Phone Number");
+	    System.out.printf("%3s %25s %20s%n", "ID", "Name", "Phone Number");
         for(User user : users) {
-            System.out.printf("%3d %25s %20s\n", user.getId(), user.getName(), user.getPhoneNumber());
+            System.out.printf("%3d %25s %20s%n", user.getId(), user.getName(), user.getPhoneNumber());
         }
         System.out.println();
     }
 
     private void createNewUser() {
-        Scanner in = new Scanner(System.in);
+        Scanner in = createStdinScanner();
 
         System.out.println("Enter new user's name:");
         String name = in.nextLine();
@@ -95,7 +87,7 @@ public class PhoneBook {
     }
 
     private void removeUser() {
-        Scanner in = new Scanner(System.in);
+        Scanner in = createStdinScanner();
 
         while(true) {
             System.out.println("Enter ID of user to remove ('-1' to cancel):");
@@ -106,7 +98,7 @@ public class PhoneBook {
                     return;
                 }
             } catch (Exception ignored) {
-                in = new Scanner(System.in);
+                in = createStdinScanner();
                 continue;
             }
 
@@ -115,11 +107,15 @@ public class PhoneBook {
                     System.out.println("User removed successfully\n");
                 }
                 else {
-                    System.out.printf("User of ID %d was not found. Please, try again\n", id);
+                    System.out.printf("User of ID %d was not found. Please, try again%n", id);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static Scanner createStdinScanner() {
+        return new Scanner(System.in, "UTF-8");
     }
 }
