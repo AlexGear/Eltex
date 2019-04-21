@@ -3,13 +3,21 @@ package ru.eltex.phonebook;
 import org.springframework.boot.SpringApplication;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Singleton class for working with the phone book.
+ */
 public class PhoneBook {
     public static final PhoneBook INSTANCE = new PhoneBook();
 
     private final PhoneBookStorage storage;
 
+    /**
+     * Gets all the {@link User}s stored in the phone book
+     * @return List of {@link User}s stored in the phone book
+     */
     public List<User> getUsers() {
         try {
             return storage.getAllUsers();
@@ -24,6 +32,15 @@ public class PhoneBook {
         storage = new DBStorage("users");
     }
 
+    /**
+     * Opens the console menu for user-interaction with the phone book and waits for inputs.
+     * The options are:
+     * 1. List all the users
+     * 2. Create new user
+     * 3. Remove existing user
+     * 4. Leave the menu
+     * The execution is returned when the user leaves the menu
+     */
     void enterMenu() {
         while (true) {
             int option = askOption();
@@ -37,6 +54,10 @@ public class PhoneBook {
         }
     }
 
+    /**
+     * Prints the menu entries and waits for input
+     * @return The option number that the user selected
+     */
     private int askOption() {
         Scanner in = createStdinScanner();
         System.out.println("Phone book menu:");
@@ -56,6 +77,9 @@ public class PhoneBook {
         }
     }
 
+    /**
+     * Prints all the users stored in the phone book
+     */
     private void listUsers() {
         List<User> users = getUsers();
 	    if(users.size() == 0) {
@@ -70,6 +94,9 @@ public class PhoneBook {
         System.out.println();
     }
 
+    /**
+     * Starts the dialog for user creation
+     */
     private void createNewUser() {
         Scanner in = createStdinScanner();
 
@@ -86,6 +113,9 @@ public class PhoneBook {
         }
     }
 
+    /**
+     * Starts the dialog for user removal
+     */
     private void removeUser() {
         Scanner in = createStdinScanner();
 
@@ -116,6 +146,6 @@ public class PhoneBook {
     }
 
     private static Scanner createStdinScanner() {
-        return new Scanner(System.in, "UTF-8");
+        return new Scanner(System.in, StandardCharsets.UTF_8);
     }
 }
