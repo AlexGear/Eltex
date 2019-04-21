@@ -1,10 +1,9 @@
 package ru.eltex.phonebook;
 
-import org.springframework.boot.SpringApplication;
-
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Singleton class for working with the phone book.
@@ -23,7 +22,6 @@ public class PhoneBook {
             return storage.getAllUsers();
         } catch (Exception e) {
             System.err.println("Failed to obtain users");
-            e.printStackTrace();
             return Collections.emptyList();
         }
     }
@@ -83,7 +81,7 @@ public class PhoneBook {
     private void listUsers() {
         List<User> users = getUsers();
 	    if(users.size() == 0) {
-	        System.out.println("No users%n");
+	        System.out.println("No users");
 	        return;
         }
 
@@ -109,7 +107,7 @@ public class PhoneBook {
             storage.insertNewUser(name, phoneNumber);
             System.out.println("User created successfully\n");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Failed to create a new user");
         }
     }
 
@@ -140,7 +138,7 @@ public class PhoneBook {
                     System.out.printf("User of ID %d was not found. Please, try again%n", id);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Failed to remove the user");
             }
         }
     }

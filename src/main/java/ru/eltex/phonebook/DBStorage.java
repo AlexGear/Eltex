@@ -1,5 +1,8 @@
 package ru.eltex.phonebook;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,8 @@ public class DBStorage implements PhoneBookStorage {
     private static final String LOGIN = "admin";
     private static final String PASSWORD = "ausrotten";
 
+    private static final Logger logger = LogManager.getLogger(DBStorage.class);
+
     private final String tableName;
 
     /**
@@ -21,6 +26,7 @@ public class DBStorage implements PhoneBookStorage {
      */
     public DBStorage(String tableName) {
         this.tableName = tableName;
+        logger.debug("Created DBStorage instance with tableName = '" + tableName + "'");
     }
 
     /**
@@ -41,7 +47,11 @@ public class DBStorage implements PhoneBookStorage {
                     users.add(new User(id, name, phoneNumber));
                 }
             }
+            logger.debug("getAllUsers() for table '" + tableName + "' returned " + users.size() + " user(s)");
             return users;
+        } catch (SQLException e) {
+            logger.warn("Failed to obtain users from the database", e);
+            throw e;
         }
     }
 
@@ -55,51 +65,67 @@ public class DBStorage implements PhoneBookStorage {
      */
     @Override
     public User insertNewUser(String name, String  phoneNumber) throws SQLException, IllegalArgumentException {
-        User user = new User(0, name, phoneNumber);
+        try {
+            User user = new User(0, name, phoneNumber);
 
-        final String insertSql = "INSERT INTO " + tableName + " (name, phone) VALUE (?, ?)";
-        final String selectLastInsertIdSql = "SELECT LAST_INSERT_ID()";
+            final String insertSql = "INSERT INTO " + tableName + " (name, phone) VALUE (?, ?)";
+            final String selectLastInsertIdSql = "SELECT LAST_INSERT_ID()";
 
-        try (Connection connection = connect()) {
-            try (PreparedStatement statement = connection.prepareStatement(insertSql)) {
-                statement.setString(1, name);
-                statement.setString(2, phoneNumber);
-                statement.executeUpdate();
-            }
-            try (Statement statement = connection.createStatement()) {
-                try(ResultSet rs = statement.executeQuery(selectLastInsertIdSql)) {
-                    rs.next();
-                    int id = rs.getInt(1);
-                    user.setId(id);
-                    return user;
+            logger.info("Inserting new user into table '" + tableName + "' with name=  '"
+                    + name + "', phoneNumber = '" + phoneNumber + "'...");
+            try (Connection connection = connect()) {
+                try (PreparedStatement statement = connection.prepareStatement(insertSql)) {
+                    statement.setString(1, name);
+                    statement.setString(2, phoneNumber);
+                    statement.executeUpdate();
+                }
+                try (Statement statement = connection.createStatement()) {
+                    try(ResultSet rs = statement.executeQuery(selectLastInsertIdSql)) {
+                        rs.next();
+                        int id = rs.getInt(1);
+                        user.setId(id);
+                        logger.info("User with name '" + name + "' inserted successfully, assigned ID " + id);
+                        return user;
+                    }
                 }
             }
+        } catch (IllegalArgumentException | SQLException e) {
+            logger.warn("Failed to create a new user with name = '" +
+                    name + "', phone number = '" + phoneNumber + "'", e);
+            throw e;
         }
     }
 
     /**
      * Tries to remove user from the table by its ID
-     * @param id THe ID of user to remove
+     * @param id The ID of user to remove
      * @return {@literal true} if removed successfully, {@literal false} if user with provided ID was not found
      * @throws SQLException Thrown if something went wrong while interacting the database
      */
     @Override
     public boolean removeUserById(int id) throws SQLException {
         final String sql = "DELETE FROM " + tableName + " WHERE id = " + id;
+        logger.info("Removing user with ID " + id + "...");
         try (Connection connection = connect()) {
             try (Statement statement = connection.createStatement()) {
-                return 1 == statement.executeUpdate(sql);
+                boolean success = 1 == statement.executeUpdate(sql);
+                logger.info("User with ID " + id + (success ? " removed successfully" : " was not found"));
+                return success;
             }
+        } catch (SQLException e) {
+            logger.warn("Failed to remove user with ID " + id, e);
+            throw e;
         }
     }
 
     /**
-     * Opens a connection to database using {@link DBStorage#CONNECTION_URL} as connection url,
+     * Opens a connection to the database using {@link DBStorage#CONNECTION_URL} as connection url,
      * logging in with {@link DBStorage#LOGIN} and {@link DBStorage#PASSWORD}
      * @return The open {@link Connection} instance
      * @throws SQLException Thrown if something went wrong while interacting the database
      */
     private static Connection connect() throws SQLException {
+        logger.debug("Opening connection to the database (connection URL: " + CONNECTION_URL + ")");
         return DriverManager.getConnection(CONNECTION_URL, LOGIN, PASSWORD);
     }
 }
